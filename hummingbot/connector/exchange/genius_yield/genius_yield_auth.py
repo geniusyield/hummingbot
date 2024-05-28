@@ -7,7 +7,7 @@ from urllib.parse import urlencode
 
 from hummingbot.connector.time_synchronizer import TimeSynchronizer
 from hummingbot.core.web_assistant.auth import AuthBase
-from hummingbot.core.web_assistant.connections.data_types import RESTMethod, RESTRequest, WSRequest
+from hummingbot.core.web_assistant.connections.data_types import RESTMethod, RESTRequest
 
 
 class GeniusYieldAuth(AuthBase):
@@ -35,15 +35,7 @@ class GeniusYieldAuth(AuthBase):
 
         return request
 
-    async def ws_authenticate(self, request: WSRequest) -> WSRequest:
-        """
-        This method is intended to configure a websocket request to be authenticated. Genius Yield does not use this
-        functionality
-        """
-        return request  # pass-through
-
-    def add_auth_to_params(self,
-                           params: Dict[str, Any]):
+    def add_auth_to_params(self, params: Dict[str, Any]) -> Dict[str, Any]:
         timestamp = int(self.time_provider.time() * 1e3)
 
         request_params = OrderedDict(params or {})
@@ -58,7 +50,6 @@ class GeniusYieldAuth(AuthBase):
         return {"X-MBX-APIKEY": self.api_key}
 
     def _generate_signature(self, params: Dict[str, Any]) -> str:
-
         encoded_params_str = urlencode(params)
         digest = hmac.new(self.secret_key.encode("utf8"), encoded_params_str.encode("utf8"), hashlib.sha256).hexdigest()
         return digest
