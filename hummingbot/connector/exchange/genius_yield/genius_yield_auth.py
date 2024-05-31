@@ -1,7 +1,6 @@
 import hashlib
 import hmac
 import json
-from collections import OrderedDict
 from typing import Any, Dict
 from urllib.parse import urlencode
 
@@ -23,13 +22,11 @@ class GeniusYieldAuth(AuthBase):
         :param request: the request to be configured for authenticated interaction
         """
         if request.method == RESTMethod.POST:
-            request.data = self.add_auth_to_params(params=json.loads(request.data))
+            request.data = json.dumps(self.add_auth_to_params(params=json.loads(request.data)))
         else:
             request.params = self.add_auth_to_params(params=request.params)
 
-        headers = {}
-        if request.headers is not None:
-            headers.update(request.headers)
+        headers = request.headers or {}
         headers.update(self.header_for_authentication())
         request.headers = headers
 
@@ -38,7 +35,7 @@ class GeniusYieldAuth(AuthBase):
     def add_auth_to_params(self, params: Dict[str, Any]) -> Dict[str, Any]:
         timestamp = int(self.time_provider.time() * 1e3)
 
-        request_params = OrderedDict(params or {})
+        request_params = params or {}
         request_params["timestamp"] = timestamp
 
         signature = self._generate_signature(params=request_params)
@@ -47,7 +44,7 @@ class GeniusYieldAuth(AuthBase):
         return request_params
 
     def header_for_authentication(self) -> Dict[str, str]:
-        return {"X-MBX-APIKEY": self.api_key}
+        return {"api-key": self.api_key}
 
     def _generate_signature(self, params: Dict[str, Any]) -> str:
         encoded_params_str = urlencode(params)

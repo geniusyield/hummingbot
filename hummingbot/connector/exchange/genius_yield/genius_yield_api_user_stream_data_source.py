@@ -50,6 +50,7 @@ class GeniusYieldAPIUserStreamDataSource(UserStreamTrackerDataSource):
             try:
                 data = await self._request_user_stream()
                 # Process the user stream data
+                await self._process_user_stream_data(data)
             except asyncio.CancelledError:
                 raise
             except Exception as e:

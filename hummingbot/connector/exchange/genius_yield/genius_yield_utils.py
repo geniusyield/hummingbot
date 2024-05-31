@@ -7,7 +7,7 @@ from hummingbot.client.config.config_data_types import BaseConnectorConfigMap, C
 from hummingbot.core.data_type.trade_fee import TradeFeeSchema
 
 CENTRALIZED = True
-EXAMPLE_PAIR = "ZRX-ETH"
+EXAMPLE_PAIR = "ADA-USDT"
 
 DEFAULT_FEES = TradeFeeSchema(
     maker_percent_fee_decimal=Decimal("0.001"),
@@ -22,18 +22,8 @@ def is_exchange_information_valid(exchange_info: Dict[str, Any]) -> bool:
     :param exchange_info: the exchange information for a trading pair
     :return: True if the trading pair is enabled, False otherwise
     """
-    is_spot = False
-    is_trading = False
-
-    if exchange_info.get("status", None) == "TRADING":
-        is_trading = True
-
-    permissions_sets = exchange_info.get("permissionSets", list())
-    for permission_set in permissions_sets:
-        # PermissionSet is a list, find if in this list we have "SPOT" value or not
-        if "SPOT" in permission_set:
-            is_spot = True
-            break
+    is_trading = exchange_info.get("status") == "TRADING"
+    is_spot = any("SPOT" in permission_set for permission_set in exchange_info.get("permissionSets", []))
 
     return is_trading and is_spot
 
@@ -43,7 +33,7 @@ class GeniusYieldConfigMap(BaseConnectorConfigMap):
     genius_yield_api_key: SecretStr = Field(
         default=...,
         client_data=ClientFieldData(
-            prompt=lambda cm: "Enter your Genius Yield API key",
+            prompt=lambda cm: "Genius Yield API key",
             is_secure=True,
             is_connect_key=True,
             prompt_on_new=True,
@@ -52,7 +42,7 @@ class GeniusYieldConfigMap(BaseConnectorConfigMap):
     genius_yield_api_secret: SecretStr = Field(
         default=...,
         client_data=ClientFieldData(
-            prompt=lambda cm: "Enter your Genius Yield API secret",
+            prompt=lambda cm: "Genius Yield API secret",
             is_secure=True,
             is_connect_key=True,
             prompt_on_new=True,
