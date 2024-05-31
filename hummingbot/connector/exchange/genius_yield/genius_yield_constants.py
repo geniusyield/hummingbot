@@ -7,7 +7,7 @@ HBOT_ORDER_ID_PREFIX = "x-XEKWYICX"
 MAX_ORDER_ID_LEN = 32
 
 # Base URL
-REST_URL = "https://api.genius_yield.{}/api/"
+REST_URL = "https://api.genius_yield.{}/v0/"
 WSS_URL = "wss://stream.genius_yield.{}:9443/ws"
 
 PUBLIC_API_VERSION = "v0"
@@ -25,6 +25,7 @@ SERVER_TIME_PATH_URL = "/settings"
 ACCOUNTS_PATH_URL = "/balances/{address}"
 MY_TRADES_PATH_URL = "/orders/details/{nft-token}"
 ORDER_PATH_URL = "/orders"
+CANCEL_ORDER_PATH_URL = "/orders"
 GENIUS_YIELD_USER_STREAM_PATH_URL = "/userDataStream"
 
 WS_HEARTBEAT_TIME_INTERVAL = 30

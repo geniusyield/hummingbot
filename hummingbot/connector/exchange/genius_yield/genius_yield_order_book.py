@@ -22,11 +22,9 @@ class GeniusYieldOrderBook(OrderBook):
         :param metadata: a dictionary with extra information to add to the snapshot data
         :return: a snapshot message with the snapshot information received from the exchange
         """
-        if metadata:
-            msg.update(metadata)
         return OrderBookMessage(OrderBookMessageType.SNAPSHOT, {
-            "trading_pair": msg["trading_pair"],
-            "update_id": msg["lastUpdateId"],
+            "market_id": msg["market_pair_id"],
+            "update_id": msg["timestamp"],
             "bids": msg["bids"],
             "asks": msg["asks"]
         }, timestamp=timestamp)
@@ -43,14 +41,12 @@ class GeniusYieldOrderBook(OrderBook):
         :param metadata: a dictionary with extra information to add to the difference data
         :return: a diff message with the changes in the order book notified by the exchange
         """
-        if metadata:
-            msg.update(metadata)
         return OrderBookMessage(OrderBookMessageType.DIFF, {
-            "trading_pair": msg["trading_pair"],
-            "first_update_id": msg["U"],
-            "update_id": msg["u"],
-            "bids": msg["b"],
-            "asks": msg["a"]
+            "market_id": msg["market_pair_id"], 
+            "first_update_id": msg["first_update_id"],
+            "update_id": msg["last_update_id"], 
+            "bids": msg["bids"],
+            "asks": msg["asks"]
         }, timestamp=timestamp)
 
     @classmethod
@@ -61,14 +57,12 @@ class GeniusYieldOrderBook(OrderBook):
         :param metadata: a dictionary with extra information to add to trade message
         :return: a trade message with the details of the trade as provided by the exchange
         """
-        if metadata:
-            msg.update(metadata)
-        ts = msg["E"]
+        ts = msg["timestamp"]
         return OrderBookMessage(OrderBookMessageType.TRADE, {
-            "trading_pair": msg["trading_pair"],
-            "trade_type": float(TradeType.SELL.value) if msg["m"] else float(TradeType.BUY.value),
-            "trade_id": msg["t"],
+            "market_id": msg["market_pair_id"],
+            "trade_type": float(TradeType.SELL.value) if msg["is_sell"] else float(TradeType.BUY.value),
+            "trade_id": msg["transaction_id"],
             "update_id": ts,
-            "price": msg["p"],
-            "amount": msg["q"]
+            "price": msg["price"],
+            "amount": msg["amount"]
         }, timestamp=ts * 1e-3)

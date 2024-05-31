@@ -16,7 +16,7 @@ def public_rest_url(path_url: str, domain: str = CONSTANTS.DEFAULT_DOMAIN) -> st
     :param domain: the Genius Yield domain to connect to ("com" or "us"). The default value is "com"
     :return: the full URL to the endpoint
     """
-    return CONSTANTS.REST_URL.format(domain) + CONSTANTS.PUBLIC_API_VERSION + path_url
+    return CONSTANTS.REST_URL.format(domain) + path_url
 
 
 def private_rest_url(path_url: str, domain: str = CONSTANTS.DEFAULT_DOMAIN) -> str:
@@ -26,7 +26,7 @@ def private_rest_url(path_url: str, domain: str = CONSTANTS.DEFAULT_DOMAIN) -> s
     :param domain: the Genius Yield domain to connect to ("com" or "us"). The default value is "com"
     :return: the full URL to the endpoint
     """
-    return CONSTANTS.REST_URL.format(domain) + CONSTANTS.PRIVATE_API_VERSION + path_url
+    return CONSTANTS.REST_URL.format(domain) + path_url
 
 
 def build_api_factory(
@@ -70,5 +70,5 @@ async def get_current_server_time(
         method=RESTMethod.GET,
         throttler_limit_id=CONSTANTS.SERVER_TIME_PATH_URL,
     )
-    server_time = response["serverTime"]
+    server_time = response["timestamp"]
     return server_time
